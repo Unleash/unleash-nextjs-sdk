@@ -35,6 +35,10 @@ export const getServerSideProps: GetServerSideProps<Data> = async (ctx) => {
     "set-cookie",
     `${UNLEASH_COOKIE_NAME}=${sessionId}; path=/;`
   );
+  ctx.res.setHeader( 
+    'Cache-Control', // In Pages Router you can cache entrie response, but not Unlaesh request only
+    'public, s-maxage=10, stale-while-revalidate=59'
+  )
 
   const definitions = await getDefinitions();
   const { toggles } = evaluateFlags(definitions, {
