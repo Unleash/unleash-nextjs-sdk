@@ -385,18 +385,14 @@ export default async function Page() {
 #### Page router
 ```tsx
 import { evaluateFlags, flagsClient, getDefinitions } from "@unleash/nextjs";
-import {GetServerSideProps, NextPage} from "next";
+import type { GetServerSideProps, NextPage } from "next";
 
 type Data = {
   isEnabled: boolean;
 };
 
 export const getServerSideProps: GetServerSideProps<Data> = async () => {
-  const definitions = await getDefinitions({
-    fetchOptions: {
-      next: { revalidate: 15 }, // Cache layer like Unleash Proxy!
-    },
-  });
+  const definitions = await getDefinitions();
   const context = {};
   const { toggles } = evaluateFlags(definitions, context);
   const flags = flagsClient(toggles);
