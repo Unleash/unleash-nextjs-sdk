@@ -16,7 +16,7 @@ yarn add @unleash/nextjs
 pnpm add @unleash/nextjs
 ```
 
-There is an [`./example`](./example) project that you can [deploy to Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FUnleash%2Funleash-client-nextjs%2Ftree%2Fmain%2Fexample) or [edit in CodeSandbox](https://codesandbox.io/s/github/Unleash/unleash-client-nextjs/tree/main/example).
+There is an [`./example`](./example) project that you can [deploy to Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FUnleash%2Funleash-nextjs-sdk%2Ftree%2Fmain%2Fexample) or [edit in CodeSandbox](https://codesandbox.io/s/github/Unleash/unleash-nextjs-sdk/tree/main/example).
 
 ### Environment variables
 
@@ -64,7 +64,7 @@ You can use both to have different values on client-side and server-side.
 
 This package is ready for server-side use with [App Router](https://nextjs.org/docs/app/building-your-application/routing).
 
-Refer to [`./example/README.md#App-router`](https://github.com/Unleash/unleash-client-nextjs/tree/main/example#app-router) for an implementation example.
+Refer to [`./example/README.md#App-router`](https://github.com/Unleash/unleash-nextjs-sdk/tree/main/example#app-router) for an implementation example.
 
 ```tsx
 import { cookies } from "next/headers";
@@ -109,7 +109,7 @@ export default async function Page() {
 
 It's possible to run this SDK in Next.js Edge Middleware. This is a great use case for A/B testing, where you can transparently redirect users to different pages based on a feature flag. Target pages can be statically generated, improving performance.
 
-Refer to [`./example/README.md#Middleware`](https://github.com/Unleash/unleash-client-nextjs/tree/main/example#middleware) for an implementation example.
+Refer to [`./example/README.md#Middleware`](https://github.com/Unleash/unleash-nextjs-sdk/tree/main/example#middleware) for an implementation example.
 
 ## C). Client-side only - simple use case and for development purposes (CSR)
 
