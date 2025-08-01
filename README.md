@@ -1,6 +1,8 @@
 # Unleash Next.js SDK
 
-This package allows easy integration of [Unleash](https://github.com/unleash/unleash) feature flags in a [Next.js](https://nextjs.org/) application.
+Unleash is a private, secure, and scalable [feature management platform](https://www.getunleash.io/) built to reduce the risk of releasing new features and accelerate software development. This [Next.js](https://nextjs.org/) SDK is designed to help you integrate with Unleash and evaluate feature flags inside your application.
+
+You can use this client with [Unleash Enterprise](https://www.getunleash.io/pricing?utm_source=readme&utm_medium=nextjs) or [Unleash Open Source](https://github.com/Unleash/unleash).
 
 ## Setup
 
@@ -35,7 +37,7 @@ When using Unleash **client-side**, with `<FlagProvider />` or `getFrontendFlags
 If using **server-side** (SSR, SSG, API), using `getDefinitions()` and `evaluateFlags()`, set:
 
 - `UNLEASH_SERVER_API_URL` of you instance. URL should end with `/api`
-- `UNLEASH_SERVER_API_TOKEN` [server-side API client token](https://docs.getunleash.io/reference/api-tokens-and-client-keys#client-tokens)
+- `UNLEASH_SERVER_API_TOKEN` [Backend API client token](https://docs.getunleash.io/reference/api-tokens-and-client-keys#backend-tokens)
 
 #### Detailed explanation
 
