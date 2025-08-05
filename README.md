@@ -1,6 +1,8 @@
 # Unleash Next.js SDK
 
-This package allows easy integration of [Unleash](https://github.com/unleash/unleash) feature flags in a [Next.js](https://nextjs.org/) application.
+Unleash is a private, secure, and scalable [feature management platform](https://www.getunleash.io/) built to reduce the risk of releasing new features and accelerate software development. This [Next.js](https://nextjs.org/) SDK is designed to help you integrate with Unleash and evaluate feature flags inside your application.
+
+You can use this client with [Unleash Enterprise](https://www.getunleash.io/pricing?utm_source=readme&utm_medium=nextjs) or [Unleash Open Source](https://github.com/Unleash/unleash).
 
 ## Setup
 
@@ -16,7 +18,7 @@ yarn add @unleash/nextjs
 pnpm add @unleash/nextjs
 ```
 
-There is an [`./example`](./example) project that you can [deploy to Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FUnleash%2Funleash-client-nextjs%2Ftree%2Fmain%2Fexample) or [edit in CodeSandbox](https://codesandbox.io/s/github/Unleash/unleash-client-nextjs/tree/main/example).
+There is an [`./example`](./example) project that you can [deploy to Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FUnleash%2Funleash-nextjs-sdk%2Ftree%2Fmain%2Fexample) or [edit in CodeSandbox](https://codesandbox.io/s/github/Unleash/unleash-nextjs-sdk/tree/main/example).
 
 ### Environment variables
 
@@ -35,7 +37,7 @@ When using Unleash **client-side**, with `<FlagProvider />` or `getFrontendFlags
 If using **server-side** (SSR, SSG, API), using `getDefinitions()` and `evaluateFlags()`, set:
 
 - `UNLEASH_SERVER_API_URL` of you instance. URL should end with `/api`
-- `UNLEASH_SERVER_API_TOKEN` [server-side API client token](https://docs.getunleash.io/reference/api-tokens-and-client-keys#client-tokens)
+- `UNLEASH_SERVER_API_TOKEN` [Backend API client token](https://docs.getunleash.io/reference/api-tokens-and-client-keys#backend-tokens)
 
 #### Detailed explanation
 
@@ -64,7 +66,7 @@ You can use both to have different values on client-side and server-side.
 
 This package is ready for server-side use with [App Router](https://nextjs.org/docs/app/building-your-application/routing).
 
-Refer to [`./example/README.md#App-router`](https://github.com/Unleash/unleash-client-nextjs/tree/main/example#app-router) for an implementation example.
+Refer to [`./example/README.md#App-router`](https://github.com/Unleash/unleash-nextjs-sdk/tree/main/example#app-router) for an implementation example.
 
 ```tsx
 import { cookies } from "next/headers";
@@ -109,7 +111,7 @@ export default async function Page() {
 
 It's possible to run this SDK in Next.js Edge Middleware. This is a great use case for A/B testing, where you can transparently redirect users to different pages based on a feature flag. Target pages can be statically generated, improving performance.
 
-Refer to [`./example/README.md#Middleware`](https://github.com/Unleash/unleash-client-nextjs/tree/main/example#middleware) for an implementation example.
+Refer to [`./example/README.md#Middleware`](https://github.com/Unleash/unleash-nextjs-sdk/tree/main/example#middleware) for an implementation example.
 
 ## C). Client-side only - simple use case and for development purposes (CSR)
 

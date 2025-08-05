@@ -63,10 +63,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Unleash/unleash-client-nextjs"
+    "url": "https://github.com/Unleash/unleash-nextjs-sdk"
   },
   "bugs": {
-    "url": "https://github.com/Unleash/unleash-client-nextjs/issues"
+    "url": "https://github.com/Unleash/unleash-nextjs-sdk/issues"
   },
   "publishConfig": {
     "access": "public",
