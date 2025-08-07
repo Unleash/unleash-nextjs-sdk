@@ -36,7 +36,7 @@ describe("getDefinitions", () => {
           "content-type": "application/json",
           "user-agent": "nextjs",
           "unleash-client-spec": expect.stringMatching(/\d+\.\d+\.\d+.*/),
-          "unleash-sdk": expect.stringContaining("unleash-client-nextjs:"),
+          "unleash-sdk": expect.stringContaining("unleash-nextjs-sdk:"),
           "unleash-appname": "nextjs",
         },
       }

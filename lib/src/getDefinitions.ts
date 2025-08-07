@@ -76,7 +76,7 @@ export const getDefinitions = async (
     "content-type": "application/json",
     "user-agent": appName,
     "unleash-client-spec": supportedSpecVersion,
-    "unleash-sdk": `unleash-client-nextjs:${version}`,
+    "unleash-sdk": `unleash-nextjs-sdk:${version}`,
     "unleash-appname": appName,
   };
 
