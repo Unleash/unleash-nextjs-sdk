@@ -23,7 +23,7 @@ export const flag = async <T extends string, V extends Partial<IVariant>>(
       },
     });
 
-    const { toggles } = await evaluateFlags(definitions, context);
+    const { toggles } = evaluateFlags(definitions, context);
 
     const client = flagsClient(toggles);
 
