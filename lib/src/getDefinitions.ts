@@ -1,6 +1,6 @@
 import type { ClientFeaturesResponse } from "unleash-client";
 import { removeTrailingSlash } from "./utils";
-import { version, devDependencies } from '../package.json'
+import { version, devDependencies } from "../package.json";
 
 const defaultUrl = "http://localhost:4242/api/client/features";
 const defaultToken = "default:development.unleash-insecure-api-token";
@@ -42,6 +42,29 @@ export const getDefaultConfig = (defaultAppName = "nextjs") => {
   };
 };
 
+type CacheEntry = {
+  etag?: string;
+  definitions?: ClientFeaturesResponse;
+};
+
+const definitionsCache = new Map<string, CacheEntry>();
+
+const getCacheKey = (
+  url: string,
+  headers: Record<string, string>
+) =>
+  JSON.stringify({
+    url,
+    authorization: headers["authorization"] || "",
+    instanceId: headers["unleash-instanceid"] || "",
+    appName: headers["unleash-appname"] || "",
+  });
+
+/** @internal Test utility to clear the in-memory cache. */
+export const __resetDefinitionsCache = () => {
+  definitionsCache.clear();
+};
+
 /**
  * Fetch Server-side feature flags definitions from Unleash API
  *
@@ -81,7 +104,7 @@ export const getDefinitions = async (
   };
 
   if (sendAuthorizationToken && token) {
-    headers['authorization'] = token;
+    headers["authorization"] = token;
   }
 
   if (instanceId) {
@@ -90,8 +113,17 @@ export const getDefinitions = async (
 
   if (fetchOptions.headers) {
     Object.entries(fetchOptions.headers).forEach(([key, value]) => {
-      headers[key.toLowerCase()] = value;
+      if (value != null) {
+        headers[key.toLowerCase()] = String(value);
+      }
     });
+  }
+
+  const cacheKey = getCacheKey(fetchUrl.toString(), headers);
+  const cached = definitionsCache.get(cacheKey);
+
+  if (!headers["if-none-match"] && cached?.etag) {
+    headers["if-none-match"] = cached.etag;
   }
 
   const response = await fetch(fetchUrl.toString(), {
@@ -99,5 +131,28 @@ export const getDefinitions = async (
     headers,
   });
 
-  return response?.json() as Promise<ClientFeaturesResponse>;
+  if (response.status === 304) {
+    if (cached?.definitions) {
+      return cached.definitions;
+    }
+    throw new Error(
+      "Unleash: Received 304 Not Modified but no cached definitions are available."
+    );
+  }
+
+  const definitions = (await response.json()) as ClientFeaturesResponse;
+
+  if (response.ok) {
+    const etag = response.headers?.get?.("etag");
+    if (etag) {
+      definitionsCache.set(cacheKey, {
+        etag,
+        definitions,
+      });
+    } else {
+      definitionsCache.delete(cacheKey);
+    }
+  }
+
+  return definitions;
 };
