@@ -42,38 +42,28 @@ export const getDefaultConfig = (defaultAppName = "nextjs") => {
   };
 };
 
-type CacheEntry = {
+type GetDefinitionsConfig = Partial<ReturnType<typeof getDefaultConfig>>;
+
+export type DefinitionsCache = {
   etag?: string;
   definitions?: ClientFeaturesResponse;
 };
 
-const definitionsCache = new Map<string, CacheEntry>();
+export const createDefinitionsCache = (
+  initial?: Partial<DefinitionsCache>
+): DefinitionsCache => ({
+  etag: initial?.etag,
+  definitions: initial?.definitions,
+});
 
-const getCacheKey = (
-  url: string,
-  headers: Record<string, string>
-) =>
-  JSON.stringify({
-    url,
-    authorization: headers["authorization"] || "",
-    instanceId: headers["unleash-instanceid"] || "",
-    appName: headers["unleash-appname"] || "",
-  });
-
-/** @internal Test utility to clear the in-memory cache. */
-export const __resetDefinitionsCache = () => {
-  definitionsCache.clear();
+type DefinitionsResponse = {
+  definitions?: ClientFeaturesResponse;
+  response: Response;
 };
 
-/**
- * Fetch Server-side feature flags definitions from Unleash API
- *
- * If you provide `url` in the config parameter, it should be a full endpoint path:
- * @example getDefinitions({ url: `http://localhost:4242/api/client/features` })
- */
-export const getDefinitions = async (
-  config?: Partial<ReturnType<typeof getDefaultConfig>>
-) => {
+const getDefinitionsRaw = async (
+  config?: GetDefinitionsConfig
+): Promise<DefinitionsResponse> => {
   const { appName, url, token, instanceId, fetchOptions } = {
     ...getDefaultConfig(),
     ...(config || {}),
@@ -119,39 +109,83 @@ export const getDefinitions = async (
     });
   }
 
-  const cacheKey = getCacheKey(fetchUrl.toString(), headers);
-  const cached = definitionsCache.get(cacheKey);
-
-  if (!headers["if-none-match"] && cached?.etag) {
-    headers["if-none-match"] = cached.etag;
-  }
-
   const response = await fetch(fetchUrl.toString(), {
     ...fetchOptions,
     headers,
   });
 
   if (response.status === 304) {
-    if (cached?.definitions) {
-      return cached.definitions;
+    return { response };
+  }
+
+  const definitions = (await response.json()) as ClientFeaturesResponse;
+
+  return { definitions, response };
+};
+
+/**
+ * Fetch Server-side feature flags definitions from Unleash API
+ *
+ * If you provide `url` in the config parameter, it should be a full endpoint path:
+ * @example getDefinitions({ url: `http://localhost:4242/api/client/features` })
+ */
+export const getDefinitions = async (
+  config?: GetDefinitionsConfig
+) => {
+  const { definitions, response } = await getDefinitionsRaw(config);
+
+  if (response.status === 304 || !definitions) {
+    throw new Error(
+      "Unleash: Received 304 Not Modified but no cached definitions are available."
+    );
+  }
+
+  return definitions;
+};
+
+export const getDefinitionsCached = async (
+  config?: GetDefinitionsConfig & { cache?: DefinitionsCache }
+) => {
+  const { cache, ...configOverrides } = config || {};
+
+  const existingHeaders = configOverrides.fetchOptions?.headers || {};
+  const hasIfNoneMatch = Object.keys(existingHeaders).some(
+    (header) => header.toLowerCase() === "if-none-match"
+  );
+
+  const configWithEtag =
+    cache?.etag && !hasIfNoneMatch
+      ? {
+          ...configOverrides,
+          fetchOptions: {
+            ...(configOverrides.fetchOptions || {}),
+            headers: {
+              ...existingHeaders,
+              "if-none-match": cache.etag,
+            },
+          },
+        }
+      : configOverrides;
+
+  const { definitions, response } = await getDefinitionsRaw(configWithEtag);
+
+  if (response.status === 304) {
+    if (cache?.definitions) {
+      return cache.definitions;
     }
     throw new Error(
       "Unleash: Received 304 Not Modified but no cached definitions are available."
     );
   }
 
-  const definitions = (await response.json()) as ClientFeaturesResponse;
+  if (response.ok && cache && definitions) {
+    const etag = response.headers?.get?.("etag") ?? undefined;
+    cache.etag = etag;
+    cache.definitions = definitions;
+  }
 
-  if (response.ok) {
-    const etag = response.headers?.get?.("etag");
-    if (etag) {
-      definitionsCache.set(cacheKey, {
-        etag,
-        definitions,
-      });
-    } else {
-      definitionsCache.delete(cacheKey);
-    }
+  if (!definitions) {
+    throw new Error("Unleash: Failed to parse feature definitions.");
   }
 
   return definitions;

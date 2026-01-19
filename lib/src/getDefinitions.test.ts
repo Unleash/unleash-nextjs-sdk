@@ -1,7 +1,8 @@
 import {
   getDefinitions,
+  getDefinitionsCached,
   getDefaultConfig,
-  __resetDefinitionsCache,
+  createDefinitionsCache,
 } from "./getDefinitions";
 
 const mockFetch = vi.fn();
@@ -40,7 +41,6 @@ describe("getDefinitions", () => {
   afterEach(() => {
     vi.clearAllMocks();
     vi.unstubAllEnvs();
-    __resetDefinitionsCache();
   });
 
   it("should fetch with default config", () => {
@@ -143,6 +143,7 @@ describe("getDefinitions", () => {
       url,
       appName,
       token,
+      cache,
     });
 
     expect(mockFetch).toHaveBeenCalledWith(url, {
@@ -211,8 +212,10 @@ describe("getDefinitions", () => {
         createResponse({ version: 1, features: [] }, { etag: "etag-2" })
       );
 
-    await getDefinitions();
-    await getDefinitions();
+    const cache = createDefinitionsCache();
+
+    await getDefinitionsCached({ cache });
+    await getDefinitionsCached({ cache });
 
     expect(mockFetch).toHaveBeenNthCalledWith(
       2,
@@ -236,8 +239,10 @@ describe("getDefinitions", () => {
         createResponse(undefined, { status: 304, etag: "etag-1" })
       );
 
-    await getDefinitions();
-    await expect(getDefinitions()).resolves.toEqual(firstResponse);
+    const cache = createDefinitionsCache();
+
+    await getDefinitionsCached({ cache });
+    await expect(getDefinitionsCached({ cache })).resolves.toEqual(firstResponse);
 
     expect(mockFetch).toHaveBeenNthCalledWith(
       2,
@@ -255,7 +260,9 @@ describe("getDefinitions", () => {
       createResponse(undefined, { status: 304, etag: "etag-1" })
     );
 
-    await expect(getDefinitions()).rejects.toThrow(
+    const cache = createDefinitionsCache();
+
+    await expect(getDefinitionsCached({ cache })).rejects.toThrow(
       /Received 304 Not Modified/
     );
   });
