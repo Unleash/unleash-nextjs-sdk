@@ -1,6 +1,6 @@
 import type { ClientFeaturesResponse } from "unleash-client";
 import { removeTrailingSlash } from "./utils";
-import { version, devDependencies } from '../package.json'
+import { version, devDependencies } from "../package.json";
 
 const defaultUrl = "http://localhost:4242/api/client/features";
 const defaultToken = "default:development.unleash-insecure-api-token";
@@ -42,15 +42,28 @@ export const getDefaultConfig = (defaultAppName = "nextjs") => {
   };
 };
 
-/**
- * Fetch Server-side feature flags definitions from Unleash API
- *
- * If you provide `url` in the config parameter, it should be a full endpoint path:
- * @example getDefinitions({ url: `http://localhost:4242/api/client/features` })
- */
-export const getDefinitions = async (
-  config?: Partial<ReturnType<typeof getDefaultConfig>>
-) => {
+type GetDefinitionsConfig = Partial<ReturnType<typeof getDefaultConfig>>;
+
+export type DefinitionsCache = {
+  etag?: string;
+  definitions?: ClientFeaturesResponse;
+};
+
+export const createDefinitionsCache = (
+  initial?: Partial<DefinitionsCache>
+): DefinitionsCache => ({
+  etag: initial?.etag,
+  definitions: initial?.definitions,
+});
+
+type DefinitionsResponse = {
+  definitions?: ClientFeaturesResponse;
+  response: Response;
+};
+
+const getDefinitionsRaw = async (
+  config?: GetDefinitionsConfig
+): Promise<DefinitionsResponse> => {
   const { appName, url, token, instanceId, fetchOptions } = {
     ...getDefaultConfig(),
     ...(config || {}),
@@ -81,7 +94,7 @@ export const getDefinitions = async (
   };
 
   if (sendAuthorizationToken && token) {
-    headers['authorization'] = token;
+    headers["authorization"] = token;
   }
 
   if (instanceId) {
@@ -99,5 +112,79 @@ export const getDefinitions = async (
     headers,
   });
 
-  return response?.json() as Promise<ClientFeaturesResponse>;
+  if (response.status === 304) {
+    return { response };
+  }
+
+  const definitions = (await response.json()) as ClientFeaturesResponse;
+
+  return { definitions, response };
+};
+
+/**
+ * Fetch Server-side feature flags definitions from Unleash API
+ *
+ * If you provide `url` in the config parameter, it should be a full endpoint path:
+ * @example getDefinitions({ url: `http://localhost:4242/api/client/features` })
+ */
+export const getDefinitions = async (
+  config?: GetDefinitionsConfig
+) => {
+  const { definitions, response } = await getDefinitionsRaw(config);
+
+  if (response.status === 304 || !definitions) {
+    throw new Error(
+      "Unleash: Received 304 Not Modified but no cached definitions are available."
+    );
+  }
+
+  return definitions;
+};
+
+export const getDefinitionsCached = async (
+  config?: GetDefinitionsConfig & { cache?: DefinitionsCache }
+) => {
+  const { cache, ...configOverrides } = config || {};
+
+  const existingHeaders = configOverrides.fetchOptions?.headers || {};
+  const hasIfNoneMatch = Object.keys(existingHeaders).some(
+    (header) => header.toLowerCase() === "if-none-match"
+  );
+
+  const configWithEtag =
+    cache?.etag && !hasIfNoneMatch
+      ? {
+          ...configOverrides,
+          fetchOptions: {
+            ...(configOverrides.fetchOptions || {}),
+            headers: {
+              ...existingHeaders,
+              "if-none-match": cache.etag,
+            },
+          },
+        }
+      : configOverrides;
+
+  const { definitions, response } = await getDefinitionsRaw(configWithEtag);
+
+  if (response.status === 304) {
+    if (cache?.definitions) {
+      return cache.definitions;
+    }
+    throw new Error(
+      "Unleash: Received 304 Not Modified but no cached definitions are available."
+    );
+  }
+
+  if (response.ok && cache && definitions) {
+    const etag = response.headers?.get?.("etag") ?? undefined;
+    cache.etag = etag;
+    cache.definitions = definitions;
+  }
+
+  if (!definitions) {
+    throw new Error("Unleash: Failed to parse feature definitions.");
+  }
+
+  return definitions;
 };
