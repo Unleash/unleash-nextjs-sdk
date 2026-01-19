@@ -143,7 +143,6 @@ describe("getDefinitions", () => {
       url,
       appName,
       token,
-      cache,
     });
 
     expect(mockFetch).toHaveBeenCalledWith(url, {

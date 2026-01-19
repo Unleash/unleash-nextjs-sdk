@@ -103,9 +103,7 @@ const getDefinitionsRaw = async (
 
   if (fetchOptions.headers) {
     Object.entries(fetchOptions.headers).forEach(([key, value]) => {
-      if (value != null) {
-        headers[key.toLowerCase()] = String(value);
-      }
+      headers[key.toLowerCase()] = value;
     });
   }
 
