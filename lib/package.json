@@ -53,8 +53,8 @@
     "commander": "12.1.0",
     "murmurhash3js": "3.0.1",
     "semver": "7.6.3",
-    "unleash-client": "^6.4.4",
-    "unleash-proxy-client": "^3.7.4"
+    "unleash-client": "^6.9.3",
+    "unleash-proxy-client": "^3.7.8"
   },
   "peerDependencies": {
     "next": ">=12",
