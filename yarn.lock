@@ -2934,10 +2934,10 @@ language-tags@^1.0.9:
   dependencies:
     language-subtag-registry "^0.3.20"
 
-launchdarkly-eventsource@2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/launchdarkly-eventsource/-/launchdarkly-eventsource-2.0.3.tgz#8a7b8da5538153f438f7d452b1c87643d900f984"
-  integrity sha512-VhFjppK7jXlcEKaS7bxdoibB5j01NKyeDR7a8XfssdDGNWCTsbF0/5IExSmPi44eDncPhkoPNxlSZhEZvrbD5w==
+launchdarkly-eventsource@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/launchdarkly-eventsource/-/launchdarkly-eventsource-2.2.0.tgz#dcabc7264d9dee05a60dcf5fca9fd0cefcc82d22"
+  integrity sha512-u38fYlLSq/m6oFz0MS1/76Sj2xzlYhTKZ+sf/vju6PA86PMc6fPlY5k8CdU79edLXjNwsvIQTDvDNy3llDqB8A==
 
 levn@^0.4.1:
   version "0.4.1"
@@ -3744,10 +3744,15 @@ semver@^6.3.1:
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
 
-semver@^7.3.5, semver@^7.5.3, semver@^7.6.2:
+semver@^7.3.5, semver@^7.5.3:
   version "7.6.2"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.6.2.tgz#1e3b34759f896e8f14d6134732ce798aeb0c6e13"
   integrity sha512-FNAIBWCx9qcRhoHcgcJ0gvU7SN1lYU2ZXuSfl04bSC5OpvDHFyJCjdNHomPXxjQlCBU67YW64PzY7/VIEH7F2w==
+
+semver@^7.7.3:
+  version "7.7.3"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-7.7.3.tgz#4b5f4143d007633a8dc671cd0a6ef9147b8bb946"
+  integrity sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==
 
 set-function-length@^1.2.1:
   version "1.2.2"
@@ -4305,24 +4310,24 @@ unique-slug@^4.0.0:
   dependencies:
     imurmurhash "^0.1.4"
 
-unleash-client@^6.4.4:
-  version "6.4.4"
-  resolved "https://registry.yarnpkg.com/unleash-client/-/unleash-client-6.4.4.tgz#7768f751086da785f9a3249bea2889cea660cd3f"
-  integrity sha512-ehQUoXHGEVXiSK/ifphbAzaGrJO4i1X9s2W4+SFP9fRz0lblbXEl57qE2rvts0uDDPGWjV389b4yziJnfYjMrw==
+unleash-client@^6.9.3:
+  version "6.9.3"
+  resolved "https://registry.yarnpkg.com/unleash-client/-/unleash-client-6.9.3.tgz#7611feba9566c2be884ca90cb2ba866652c6a3b2"
+  integrity sha512-417Yg9P4WbGUbBS38UtLdPjNLTh8ab69NpUFJ63h+zYrlGB4/6aNBZrkUZcCXRKE3YQg2hq/nFfAgYxFFLNlSw==
   dependencies:
     http-proxy-agent "^7.0.2"
     https-proxy-agent "^7.0.5"
     ip-address "^9.0.5"
-    launchdarkly-eventsource "2.0.3"
+    launchdarkly-eventsource "2.2.0"
     make-fetch-happen "^13.0.1"
     murmurhash3js "^3.0.1"
     proxy-from-env "^1.1.0"
-    semver "^7.6.2"
+    semver "^7.7.3"
 
-unleash-proxy-client@^3.7.4:
-  version "3.7.4"
-  resolved "https://registry.yarnpkg.com/unleash-proxy-client/-/unleash-proxy-client-3.7.4.tgz#a6422fbf6ba8ac8fb410c664f7efd6c85c3471c2"
-  integrity sha512-/MySSG+d1jlChDZrIKxRMClerj9kAaVMDHDA48Uguq7JhYfEvNFGcm+waaWsgaK+Xx7+xRTnKgMq0x8fSDiv3w==
+unleash-proxy-client@^3.7.8:
+  version "3.7.8"
+  resolved "https://registry.yarnpkg.com/unleash-proxy-client/-/unleash-proxy-client-3.7.8.tgz#ab09f56ea1c51c68a97ed013de5abff99bea77d9"
+  integrity sha512-VX0jDcOporeVb1nh4+HGpEZIwcwHl/HP/7cyZxQq3umffN0hx44Tw1u4nmdopmm9s7Hb2BES0pFCIntr/lh3vQ==
   dependencies:
     tiny-emitter "^2.1.0"
     uuid "^9.0.1"
